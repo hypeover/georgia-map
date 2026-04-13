@@ -10,7 +10,7 @@ import {
   MapZoomControl,
 } from "@/components/ui/map";
 import { Spinner } from "@/components/ui/spinner";
-import { MapPinIcon } from "lucide-react";
+import { MapPinIcon, Heart, Trash } from "lucide-react";
 import {
   Card,
   CardAction,
@@ -18,9 +18,9 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge" 
-import { Button } from "@/components/ui/button"
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 const MapComp = () => {
   const [data, setData] = useState<any[]>([]);
@@ -31,6 +31,14 @@ const MapComp = () => {
       setData(JSON.parse(stored));
     }
   }, []);
+
+  const toggleFav = (index: number) => {
+    const updatedData = [...data];
+    updatedData[index].fav = !updatedData[index].fav;
+
+    setData(updatedData);
+    localStorage.setItem("myData", JSON.stringify(updatedData));
+  };
 
   console.log(data);
 
@@ -55,18 +63,37 @@ const MapComp = () => {
             >
               <MapPopup className="overflow-hidden w-80 rounded-xl border-0 p-0 duration-600 bg-popover-foreground/0  backdrop-blur-md">
                 <Card className="relative rounded-none mx-auto w-full max-w-sm pt-0 bg-transparent">
-                  <a target="_blank" href={"https://georgia.to" + place.url} ><img
-                    src={place.thumbnail}
-                    alt="Event cover"
-                    className="relative w-full min-h-45 hover:brightness-60 ease-in-out duration-300 "
-                  /></a>
-                  <CardHeader className="flex flex-col" >    
-                    <CardTitle className="text-popover-foreground text-2xl" >{place.title}</CardTitle>
-                    <CardAction className="flex flex-row flex-wrap" >
-                      {place.types.map((type: string, i: number) => (<Badge key={i} className="mt-1 mb-1 bg-popover-foreground text-popover " >{type}</Badge>))}
+                  <a target="_blank" href={"https://georgia.to" + place.url}>
+                    <img
+                      src={place.thumbnail}
+                      alt="Event cover"
+                      className="relative w-full min-h-45 hover:brightness-60 ease-in-out duration-300 "
+                    />
+                  </a>
+                  <CardHeader className="flex flex-col">
+                    <CardTitle className="text-popover-foreground text-2xl">
+                      {place.title}
+                    </CardTitle>
+                    <CardAction className="flex flex-row flex-wrap">
+                      {place.types.map((type: string, i: number) => (
+                        <Badge
+                          key={i}
+                          className="mt-1 mb-1 bg-popover-foreground text-popover "
+                        >
+                          {type}
+                        </Badge>
+                      ))}
                     </CardAction>
-                    <CardFooter>
-
+                    <CardFooter className="w-full p-0">
+                      <div className="flex flex-row w-full justify-between">
+                        <Heart
+                          className="cursor-pointer"
+                          fill={place.fav ? "black" : "white"}
+                          size={30}
+                          onClick={() => toggleFav(i)}
+                        />
+                        <Trash className="cursor-pointer" size={30} />
+                      </div>
                     </CardFooter>
                   </CardHeader>
                 </Card>
@@ -82,3 +109,18 @@ const MapComp = () => {
 };
 
 export default MapComp;
+
+/*
+
+const [data, setData] = useState<any[]>([]);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("myData");
+    if (stored) {
+      setData(JSON.parse(stored));
+    }
+  }, []);
+
+  console.log(data);
+
+*/

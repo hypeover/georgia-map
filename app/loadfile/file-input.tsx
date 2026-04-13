@@ -9,7 +9,6 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import Link from 'next/link'
 
-
 const FileInput = () => {
 
   const [data, setData] = useState<File | undefined>(undefined);
