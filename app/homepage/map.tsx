@@ -8,15 +8,22 @@ import {
   MapFullscreenControl,
   MapTileLayer,
   MapZoomControl,
-
-} from "@/components/ui/map"
-import { Spinner } from '@/components/ui/spinner'
-import { MapPinIcon } from 'lucide-react'
-import { Card } from "@/components/ui/card";
+} from "@/components/ui/map";
+import { Spinner } from "@/components/ui/spinner";
+import { MapPinIcon } from "lucide-react";
+import {
+  Card,
+  CardAction,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge" 
+import { Button } from "@/components/ui/button"
 
 const MapComp = () => {
   const [data, setData] = useState<any[]>([]);
-
 
   useEffect(() => {
     const stored = localStorage.getItem("myData");
@@ -28,54 +35,50 @@ const MapComp = () => {
   console.log(data);
 
   return (
-    <Map center={[41.720927, 43.807854]} zoom={8} >
+    <Map className="rounded-none" center={[41.720927, 43.807854]} zoom={8}>
       <MapTileLayer />
-      <MapZoomControl  />
+      <MapZoomControl />
       <MapFullscreenControl />
-      <MapMarkerClusterGroup>
-          {data ? data.map((place, i) => (
-              <MapMarker key={i} position={[place.lat, place.lon]} icon={<MapPinIcon height={36} width={36} />} >
+      <MapMarkerClusterGroup
+        icon={(markerCount) => (
+          <div className="bg-popover-foreground text-base text-popover flex size-10 items-center justify-center rounded-full border font-semibold">
+            {markerCount}
+          </div>
+        )}
+      >
+        {data ? (
+          data.map((place, i) => (
+            <MapMarker
+              key={i}
+              position={[place.lat, place.lon]}
+              icon={<MapPinIcon height={36} width={36} />}
+            >
+              <MapPopup className="overflow-hidden w-80 rounded-xl border-0 p-0 duration-600 bg-popover-foreground/0  backdrop-blur-md">
+                <Card className="relative rounded-none mx-auto w-full max-w-sm pt-0 bg-transparent">
+                  <a target="_blank" href={"https://georgia.to" + place.url} ><img
+                    src={place.thumbnail}
+                    alt="Event cover"
+                    className="relative w-full min-h-45 hover:brightness-60 ease-in-out duration-300 "
+                  /></a>
+                  <CardHeader className="flex flex-col" >    
+                    <CardTitle className="text-popover-foreground text-2xl" >{place.title}</CardTitle>
+                    <CardAction className="flex flex-row flex-wrap" >
+                      {place.types.map((type: string, i: number) => (<Badge key={i} className="mt-1 mb-1 bg-popover-foreground text-popover " >{type}</Badge>))}
+                    </CardAction>
+                    <CardFooter>
 
-              </MapMarker>
-          )) : <Spinner />}
-        
+                    </CardFooter>
+                  </CardHeader>
+                </Card>
+              </MapPopup>
+            </MapMarker>
+          ))
+        ) : (
+          <Spinner />
+        )}
       </MapMarkerClusterGroup>
     </Map>
   );
 };
 
 export default MapComp;
-
-/* 
-
-{data ? data.map((place) => (
-          <MapMarker key={place} longitude={place.lon} latitude={place.lat} >
-            <MarkerContent>
-              <div className="size-5 rounded-full bg-rose-500 border-2 border-white shadow-lg cursor-pointer hover:scale-110 transition-transform" />
-            </MarkerContent>
-          </MapMarker>
-        )) : <Spinner /> }
-
-*/
-
-/* 
-  <MapPopup
-            longitude={selectedPoint.coordinates[0]}
-            latitude={selectedPoint.coordinates[1]}
-            onClose={() => setSelectedPoint(null)}
-          >
-            <div className="space-y-2 p-1">
-              <p className="font-semibold">{selectedPoint.properties.title}</p>
-
-              <img
-                src={selectedPoint.properties.thumbnail}
-                className="w-32 h-20 object-cover rounded"
-              />
-
-              <p className="text-xs">
-                {selectedPoint.properties.types.join(", ")}
-              </p>
-            </div>
-          </MapPopup>
-
-*/
