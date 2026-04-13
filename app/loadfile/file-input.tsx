@@ -8,15 +8,14 @@ import {
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import Link from 'next/link'
-import { ChessKing } from 'lucide-react'
 
 
 const FileInput = () => {
 
-  const [data, setData] = useState()
+  const [data, setData] = useState<File | undefined>(undefined);
   const [file, setFile] = useState() 
   
-  const save = (newData) => {
+  const save = (newData : File) => {
     setData(newData);
     localStorage.setItem('myData', JSON.stringify(newData));
 
@@ -24,7 +23,7 @@ const FileInput = () => {
 
   }
 
-  const loadFromFile = (file) => {
+  const loadFromFile = (file : File) => {
     if (file.type !== 'application/json') {
       console.log('zly plik')
     }
