@@ -2,86 +2,45 @@
 import React, { useEffect, useState } from "react";
 import {
   Map,
-  MapClusterLayer,
-  MapControls,
   MapMarker,
-  MarkerContent,
   MapPopup,
-} from "@/components/ui/map";
+  MapMarkerClusterGroup,
+  MapFullscreenControl,
+  MapTileLayer,
+  MapZoomControl,
+
+} from "@/components/ui/map"
+import { Spinner } from '@/components/ui/spinner'
+import { MapPinIcon } from 'lucide-react'
 import { Card } from "@/components/ui/card";
-import { Spinner } from "@/components/ui/spinner";
 
 const MapComp = () => {
   const [data, setData] = useState<any[]>([]);
-  const [selectedPoint, setSelectedPoint] = useState<{
-    coordinates: [number, number];
-    properties: PlaceProperties;
-  } | null>(null);
+
 
   useEffect(() => {
-  const stored = localStorage.getItem("myData");
-  if (stored) {
-    setData(JSON.parse(stored));
-  }
-}, []);
+    const stored = localStorage.getItem("myData");
+    if (stored) {
+      setData(JSON.parse(stored));
+    }
+  }, []);
 
   console.log(data);
 
-  const geojson = {
-    type: "FeatureCollection",
-    features: data.map((item) => ({
-      type: "Feature",
-      geometry: {
-        type: "Point",
-        coordinates: [item.lon, item.lat], // ⚠️ kolejność: lon, lat
-      },
-      properties: {
-        id: item.id,
-        title: item.title,
-        thumbnail: item.thumbnail,
-        types: item.types,
-        url: item.url,
-        fav: item.fav,
-      },
-    })),
-  };
-
-  interface PlaceProperties {
-    id: string;
-    title: string;
-    thumbnail: string;
-    types: string[];
-    url: string;
-    fav: boolean;
-  }
-
   return (
-    <Card className="h-full w-4/6 p-0 rounded-none overflow-hidden">
-      <Map center={[41.697102, 44.773674]} zoom={8}>
-        <MapClusterLayer<PlaceProperties>
-          data={geojson}
-          clusterRadius={50}
-          clusterMaxZoom={14}
-          clusterColors={["#1d8cf8", "#6d5dfc", "#e23670"]}
-          pointColor="black"
-          onPointClick={(feature, coordinates) => {
-            setSelectedPoint({
-              coordinates,
-              properties: feature.properties,
-            });
-          }}
-        />
-        {selectedPoint && (
-          <MapMarker longitude={selectedPoint.coordinates[0]}
-            latitude={selectedPoint.coordinates[1]} >
-              <MarkerContent>
-                <div className="size-5 rounded-full bg-rose-500 border-2 border-white shadow-lg cursor-pointer hover:scale-110 transition-transform" />
-              </MarkerContent>
-          </MapMarker>
-        )}
-        <MapControls showFullscreen />
-      </Map>
-    </Card>
+    <Map center={[41.720927, 43.807854]} zoom={8} >
+      <MapTileLayer />
+      <MapZoomControl  />
+      <MapFullscreenControl />
+      <MapMarkerClusterGroup>
+          {data ? data.map((place, i) => (
+              <MapMarker key={i} position={[place.lat, place.lon]} icon={<MapPinIcon height={36} width={36} />} >
+
+              </MapMarker>
+          )) : <Spinner />}
+        
+      </MapMarkerClusterGroup>
+    </Map>
   );
 };
 
