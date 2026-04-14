@@ -39,7 +39,7 @@ const FileInput = () => {
           if (selectedFile) setFile(selectedFile);
         }} className='mt-2 mb-2' />
       <Button onClick={loadFromFile}>Upload</Button>
-      <FieldDescription className='text-lg'>Or click <Link href={'/homepage'} >here</Link> to use actual uploaded data.</FieldDescription>
+      <FieldDescription className='text-lg'>Or click <Link href={'/home'} >here</Link> to use actual uploaded data.</FieldDescription>
     </Field>
   )
 }
