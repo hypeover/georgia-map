@@ -8,49 +8,37 @@ import {
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import Link from 'next/link'
+import { db } from '@/lib/db'
 
 const FileInput = () => {
-
-  const [data, setData] = useState<File | undefined>(undefined);
-  const [file, setFile] = useState() 
+  const [file, setFile] = useState<File | null>(null);
   
-  const save = (newData : File) => {
-    setData(newData);
-    localStorage.setItem('myData', JSON.stringify(newData));
+  const loadFromFile = async () => {
+    if (!file) {
+      console.log('brak pliku');
+      return;
+    }
 
-    console.log(data)
-
-  }
-
-  const loadFromFile = (file : File) => {
     if (file.type !== 'application/json') {
-      console.log('zly plik')
+      console.log('zły plik');
+      return;
     }
 
-    const reader = new FileReader();
-
-    reader.onload = (e) => {
-      try {
-        const json = JSON.parse(e.target?.result as string);
-        save(json);
-        console.log('zadladowane dane')
-      } catch {console.log('zle zaladowane dane')}
-    }
-
-    reader.readAsText(file)
+    const text = await file.text();
+    const data = JSON.parse(text);
+    await db.importPlaces(data);
 
     console.log(data)
-
   }
 
   return (
     <Field>
       <FieldLabel className='text-xl'  htmlFor="picture">Select map data to upload.</FieldLabel>
       <Input accept=".json" id="picture" type="file" onChange={(e) => {
-        const file = e.target.files?.[0];
-        if (file) loadFromFile(file);
-      }} className='mt-2 mb-2' />
-      <Button>Upload</Button>
+          const selectedFile = e.target.files?.[0];
+          if (selectedFile) setFile(selectedFile);
+        }} className='mt-2 mb-2' />
+      <Button onClick={loadFromFile}>Upload</Button>
       <FieldDescription className='text-lg'>Or click <Link href={'/homepage'} >here</Link> to use actual uploaded data.</FieldDescription>
     </Field>
   )
@@ -72,3 +60,39 @@ export default FileInput
       <FieldDescription className='text-lg'>Or click <Link href={'/homepage'} >here</Link> to use actual uploaded data.</FieldDescription>
 
 */
+
+/*
+
+  const save = (newData : File) => {
+    setData(newData);
+    localStorage.setItem('myData', JSON.stringify(newData));
+
+    console.log(data)
+
+  }
+
+  */
+
+  /*
+  const loadFromFile = (file : File) => {
+    if (file.type !== 'application/json') {
+      console.log('zly plik')
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      try {
+        const json = JSON.parse(e.target?.result as string);
+        save(json);
+        console.log('zadladowane dane')
+      } catch {console.log('zle zaladowane dane')}
+    }
+
+    reader.readAsText(file)
+
+    console.log(data)
+
+  }
+
+  */

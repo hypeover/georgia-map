@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   Map,
   MapMarker,
@@ -20,33 +20,56 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { db } from "@/lib/db"
+import { useLiveQuery } from "dexie-react-hooks";
+import { useMap } from "react-leaflet";
 
-const MapComp = () => {
-  const [data, setData] = useState<any[]>([]);
+type Place = {
+  id: string
+  title: string
+  url: string
+  thumbnail: string
+  fav?: boolean
+  types: string[]
+  lat: number
+  lon: number
+}
 
-  useEffect(() => {
-    const stored = localStorage.getItem("myData");
-    if (stored) {
-      setData(JSON.parse(stored));
-    }
-  }, []);
+type MapCompProps = {
+  selectedPlace?: Place | null
+}
 
-  const toggleFav = (index: number) => {
-    const updatedData = [...data];
-    updatedData[index].fav = !updatedData[index].fav;
+const MapComp: React.FC<MapCompProps> = ({ selectedPlace }) => {
 
-    setData(updatedData);
-    localStorage.setItem("myData", JSON.stringify(updatedData));
-  };
+  function FlyToPlace({ selectedPlace }: { selectedPlace?: Place | null }) {
+    const map = useMap();
 
-  console.log(data);
+    useEffect(() => {
+      if (!selectedPlace) return;
+
+      map.flyTo(
+        [selectedPlace.lat, selectedPlace.lon],
+        14,
+        { duration: 1.5 }
+      );
+    }, [selectedPlace, map]);
+
+    return null;
+  }
+
+  const data = useLiveQuery<Place[]>(
+    () => db.getAllPlaces(),
+    []
+  );
+
+  console.log(data)
 
   return (
-    <Map className="rounded-none" center={[41.720927, 43.807854]} zoom={8}>
+    <Map className="rounded-none"  center={[41.720927, 43.807854]} zoom={8}>
       <MapTileLayer />
       <MapZoomControl />
-      <MapFullscreenControl />
+      <MapFullscreenControl  />
+      <FlyToPlace selectedPlace={selectedPlace} />
       <MapMarkerClusterGroup
         icon={(markerCount) => (
           <div className="bg-popover-foreground text-base text-popover flex size-10 items-center justify-center rounded-full border font-semibold">
@@ -59,7 +82,7 @@ const MapComp = () => {
             <MapMarker
               key={i}
               position={[place.lat, place.lon]}
-              icon={<MapPinIcon height={36} width={36} />}
+              icon={<MapPinIcon fill={place.fav ? "black" : "white"} height={36} width={36} />}
             >
               <MapPopup className="overflow-hidden w-80 rounded-xl border-0 p-0 duration-600 bg-popover-foreground/0  backdrop-blur-md">
                 <Card className="relative rounded-none mx-auto w-full max-w-sm pt-0 bg-transparent">
@@ -71,14 +94,14 @@ const MapComp = () => {
                     />
                   </a>
                   <CardHeader className="flex flex-col">
-                    <CardTitle className="text-popover-foreground text-2xl">
+                    <CardTitle className="text-left text-popover-foreground text-2xl">
                       {place.title}
                     </CardTitle>
                     <CardAction className="flex flex-row flex-wrap">
-                      {place.types.map((type: string, i: number) => (
+                      {place.types.map((type, i) => (
                         <Badge
                           key={i}
-                          className="mt-1 mb-1 bg-popover-foreground text-popover "
+                          className="gap-5 mr-1 mt-1 mb-1 bg-popover-foreground text-popover "
                         >
                           {type}
                         </Badge>
@@ -90,7 +113,11 @@ const MapComp = () => {
                           className="cursor-pointer"
                           fill={place.fav ? "black" : "white"}
                           size={30}
-                          onClick={() => toggleFav(i)}
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            place.fav = !place.fav;
+                            await db.toggleFavorite(place.id);
+                          }}
                         />
                         <Trash className="cursor-pointer" size={30} />
                       </div>
@@ -109,18 +136,3 @@ const MapComp = () => {
 };
 
 export default MapComp;
-
-/*
-
-const [data, setData] = useState<any[]>([]);
-
-  useEffect(() => {
-    const stored = localStorage.getItem("myData");
-    if (stored) {
-      setData(JSON.parse(stored));
-    }
-  }, []);
-
-  console.log(data);
-
-*/
