@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Figtree, Outfit, Raleway, Manrope } from "next/font/google";
+import { Geist, Geist_Mono, Figtree, Outfit, Raleway, Manrope, Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/providers/theme-provider";
 
 const manropeHeading = Manrope({subsets:['latin'],variable:'--font-heading'});
 
-const raleway = Raleway({subsets:['latin'],variable:'--font-sans'});
+const inter = Inter({subsets:['latin'],variable:'--font-sans'});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,7 +38,7 @@ export default function RootLayout({
         geistSans.variable,
         geistMono.variable,
         "font-sans",
-        raleway.variable,
+        inter.variable,
         manropeHeading.variable,
       )}
     >

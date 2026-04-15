@@ -24,6 +24,12 @@ class AppDB extends Dexie {
     });
   }
 
+  async  hasUserData() {
+  const count = await db.places.count();
+  return count > 0;
+}
+
+
   async getAllPlaces() {
     return await this.places.toArray();
   }

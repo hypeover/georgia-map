@@ -6,7 +6,7 @@
   "tailwind": {
     "config": "",
     "css": "app/globals.css",
-    "baseColor": "mauve",
+    "baseColor": "neutral",
     "cssVariables": true,
     "prefix": ""
   },
@@ -23,6 +23,7 @@
   },
   "registries": {
     "@mapcn": "https://mapcn.dev/r/{name}.json",
-    "@shadcn-map": "http://shadcn-map.vercel.app/r/{name}.json"
+    "@shadcn-map": "http://shadcn-map.vercel.app/r/{name}.json",
+    "@componentry": "https://componentry.fun/r/{name}.json"
   }
 }

@@ -2,6 +2,7 @@ import React from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { ModeToggle } from '@/components/theme-toggle'
+import { motion, AnimatePresence } from "motion/react";
 
 
 const TopBar = () => {
