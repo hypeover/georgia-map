@@ -23,6 +23,11 @@ class AppDB extends Dexie {
       deletedPlaces: "id, fav",
     });
   }
+  
+  async  hasUserData() {
+  const count = await db.places.count();
+  return count > 0;
+}
 
   async getAllPlaces() {
     return await this.places.toArray();

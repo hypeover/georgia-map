@@ -9,10 +9,13 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import Link from 'next/link'
 import { db } from '@/lib/db'
+import { useRouter } from "next/navigation";
 
 const FileInput = () => {
   const [file, setFile] = useState<File | null>(null);
   
+  const router = useRouter();
+
   const loadFromFile = async () => {
     if (!file) {
       console.log('brak pliku');
@@ -27,8 +30,7 @@ const FileInput = () => {
     const text = await file.text();
     const data = JSON.parse(text);
     await db.importPlaces(data);
-
-    console.log(data)
+    router.push("/home");
   }
 
   return (

@@ -12,7 +12,7 @@ const HomePage = () => {
   return (
     <div className='bg-background h-screen w-full flex flex-col' >
         <TopBar />
-        <div className='h-full w-full flex flex-row'>
+        <div className='h-full w-full flex flex-col md:flex-row'>
             <MapComp selectedPlace={selectedPlace} />
         <ListArea setSelectedPlace={setSelectedPlace}
           selectedPlace={selectedPlace} />

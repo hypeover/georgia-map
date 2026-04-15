@@ -55,8 +55,6 @@ const FlyToPlace = ({ selectedPlace }: { selectedPlace?: Place | null }) => {
 const MapComp: React.FC<MapCompProps> = ({ selectedPlace }) => {
   const data = useLiveQuery<Place[]>(() => db.getAllPlaces(), []);
 
-  console.log(data);
-
   return (
     <Map className="rounded-none border " center={[41.720927, 43.807854]} zoom={8}>
       <MapTileLayer />
